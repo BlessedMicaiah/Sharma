@@ -3,7 +3,6 @@ import os
 import logging
 import json
 import re
-import random
 import requests
 from datetime import datetime
 import uuid
@@ -24,22 +23,23 @@ app = Flask(__name__)
 
 # DeepSeek API setup
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-732ea226899242339e5d25944abbafd7")
+DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 
-# Load sharma-health-model
+# Load sharma-health-model (optional for Render)
 MODEL_PATH = "sharma-health-model"
-try:
-    if os.environ.get('RENDER'):
-        logger.info("Running in Render environment, using DeepSeek API only")
-        model, tokenizer = None, None
-    else:
+model, tokenizer = None, None
+if not os.environ.get('RENDER'):
+    try:
         model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
         tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
         logger.info("sharma-health-model loaded")
-except Exception as e:
-    logger.error(f"Error loading sharma-health-model: {e}")
-    model, tokenizer = None, None
+    except Exception as e:
+        logger.error(f"Error loading sharma-health-model: {e}")
+        model, tokenizer = None, None
+else:
+    logger.info("Running on Render, skipping sharma-health-model loading")
 
 # Load health_data.json
 DATA_PATH = "health_data.json"
@@ -132,7 +132,8 @@ class HealthContext:
         self.current_context = {"topic": None, "last_query": None}
     
     def update_context(self, message):
-        health_topics = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "ectopic", "mortality", "infant"]
+        health_topics = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "ectopic", "mortality", "infant", "preemies"]
+        self.current_context["topic"] = None
         for topic in health_topics:
             if topic in message.lower():
                 self.current_context["topic"] = topic
@@ -145,61 +146,73 @@ health_context = HealthContext()
 @app.route('/')
 def index():
     logger.info("Index accessed")
-    return render_template('index.html', current_time=datetime.now().strftime('%H:%M:%S'))
+    try:
+        return render_template('index.html', current_time=datetime.now().strftime('%H:%M:%S'))
+    except Exception as e:
+        logger.error(f"Index render error: {e}")
+        return jsonify({'error': 'Failed to load page'}), 500
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     logger.info("Chat API accessed")
-    data = request.get_json(silent=True)
-    if not data or 'message' not in data:
-        logger.warning("Invalid or missing message")
-        return jsonify({'error': 'No message provided'}), 400
-    
-    user_message = data['message'].strip()
-    logger.info(f"Processing message: {user_message}")
-    
-    conversation_history.append({
-        'sender': 'user',
-        'message': user_message,
-        'timestamp': datetime.now().strftime('%H:%M:%S')
-    })
-    
-    current_context = health_context.update_context(user_message)
-    logger.info(f"Context: {current_context}")
-    
-    tool_match = re.search(r"(?:can you|please)?\s*(?:check|track|tell me about)?\s*(?:my)?\s*(\w+)\s*(?:for|about|of)?\s*(.+)?", user_message.lower())
-    tool_response = None
-    if tool_match:
-        tool = tool_match.group(1)
-        args = tool_match.group(2) or ""
-        logger.info(f"Tool detected: {tool}, args: {args}")
-        health_tool_mapping = {"obgyn": "obgyn", "pregnancy": "pregnancy", "neonatal": "neonatal", "remember": "remember", "recall": "recall"}
-        if tool in health_tool_mapping:
-            try:
-                tool_response = health_tool_system.execute_tool(health_tool_mapping[tool], topic=args)
-                logger.info(f"Tool response: {tool_response}")
-            except Exception as e:
-                logger.error(f"Tool error: {e}")
-                tool_response = "Oops, my tools got tangled! Let’s try something else—what’s up?"
-    
-    bot_response = generate_health_response(user_message, tool_response, current_context)
-    logger.info(f"Bot response: {bot_response}")
-    
-    conversation_history.append({
-        'sender': 'Sharma',
-        'message': bot_response,
-        'timestamp': datetime.now().strftime('%H:%M:%S')
-    })
-    
-    return jsonify({
-        'response': bot_response,
-        'history': conversation_history[-2:]
-    })
+    try:
+        data = request.get_json(silent=True)
+        if not data or 'message' not in data:
+            logger.warning("Invalid or missing message")
+            return jsonify({'error': 'No message provided'}), 400
+        
+        user_message = data['message'].strip()
+        logger.info(f"Processing message: {user_message}")
+        
+        conversation_history.append({
+            'sender': 'user',
+            'message': user_message,
+            'timestamp': datetime.now().strftime('%H:%M:%S')
+        })
+        
+        current_context = health_context.update_context(user_message)
+        logger.info(f"Context: {current_context}")
+        
+        tool_match = re.search(r"(?:can you|please)?\s*(?:check|track|tell me about)?\s*(?:my)?\s*(\w+)\s*(?:for|about|of)?\s*(.+)?", user_message.lower())
+        tool_response = None
+        if tool_match:
+            tool = tool_match.group(1)
+            args = tool_match.group(2) or ""
+            logger.info(f"Tool detected: {tool}, args: {args}")
+            health_tool_mapping = {"obgyn": "obgyn", "pregnancy": "pregnancy", "neonatal": "neonatal", "remember": "remember", "recall": "recall"}
+            if tool in health_tool_mapping:
+                try:
+                    tool_response = health_tool_system.execute_tool(health_tool_mapping[tool], topic=args)
+                    logger.info(f"Tool response: {tool_response}")
+                except Exception as e:
+                    logger.error(f"Tool error: {e}")
+                    tool_response = "Oops, my tools got tangled! Let’s try something else—what’s up?"
+        
+        bot_response = generate_health_response(user_message, tool_response, current_context)
+        logger.info(f"Bot response: {bot_response}")
+        
+        conversation_history.append({
+            'sender': 'Sharma',
+            'message': bot_response,
+            'timestamp': datetime.now().strftime('%H:%M:%S')
+        })
+        
+        return jsonify({
+            'response': bot_response,
+            'history': conversation_history[-2:]
+        })
+    except Exception as e:
+        logger.error(f"Chat endpoint error: {e}")
+        return jsonify({'error': f"Sorry, I couldn’t process that: {str(e)}"}), 500
 
 @app.route('/api/history', methods=['GET'])
 def history():
     logger.info("History accessed")
-    return jsonify({'history': conversation_history})
+    try:
+        return jsonify({'history': conversation_history})
+    except Exception as e:
+        logger.error(f"History endpoint error: {e}")
+        return jsonify({'error': 'Failed to fetch history'}), 500
 
 def generate_health_response(message, tool_response=None, context=None):
     if tool_response:
@@ -212,7 +225,7 @@ def generate_health_response(message, tool_response=None, context=None):
         return "Hey there! I’m Sharma, your go-to pal for neonatal, pregnancy, and OB-GYN chats. What’s on your mind—something about babies, bumps, or women’s health?\n\nWanna save this chat? Just say 'remember this'!"
 
     # Step 1: Check relevance
-    relevant_keywords = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "newborn", "ectopic", "mortality", "infant"]
+    relevant_keywords = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "newborn", "ectopic", "mortality", "infant", "preemies"]
     has_relevant_keyword = any(keyword in message.lower() for keyword in relevant_keywords)
     
     if not has_relevant_keyword:
@@ -241,12 +254,12 @@ def generate_health_response(message, tool_response=None, context=None):
         except Exception as e:
             logger.error(f"Error in TF-IDF search: {e}")
 
-    # Step 3: Refine query with sharma-health-model
-    refine_prompt = f"""Refine this query into a clear, specific question about neonatal, pregnancy, or OB-GYN topics. Keep it concise, relevant, and true to the original intent.
-Query: {message}
-Refined:"""
+    # Step 3: Refine query with sharma-health-model if loaded
     refined_query = message
     if model and tokenizer:
+        refine_prompt = f"""Refine this query into a clear, specific question about neonatal, pregnancy, or OB-GYN topics. Keep it concise, relevant, and true to the original intent.
+Query: {message}
+Refined:"""
         try:
             inputs = tokenizer(refine_prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
             outputs = model.generate(**inputs, max_new_tokens=50, temperature=0.8, pad_token_id=tokenizer.eos_token_id)
@@ -282,7 +295,17 @@ Answer:"""
             logger.error(f"Invalid DeepSeek response: {response_data}")
     except requests.RequestException as e:
         logger.error(f"DeepSeek API error: {e}")
-        bot_response = "Oops, I’m having trouble connecting right now! Let’s try a neonatal, pregnancy, or OB-GYN question—what’s on your mind?\n\nWanna save this chat? Just say 'remember this'!"
+        if model and tokenizer:
+            try:
+                inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
+                outputs = model.generate(**inputs, max_new_tokens=100, temperature=0.9, pad_token_id=tokenizer.eos_token_id)
+                bot_response = tokenizer.decode(outputs[0], skip_special_tokens=True).split("Answer:")[1].strip()
+                logger.info(f"Fallback sharma-health-model response: {bot_response}")
+            except Exception as e:
+                logger.error(f"Fallback model error: {e}")
+                bot_response = "Oops, I’m having trouble connecting and my backup brain’s down! Let’s try a neonatal, pregnancy, or OB-GYN question—what’s up?\n\nWanna save this chat? Just say 'remember this'!"
+        else:
+            bot_response = "Oops, I’m having trouble connecting right now! Let’s try a neonatal, pregnancy, or OB-GYN question—what’s on your mind?\n\nWanna save this chat? Just say 'remember this'!"
 
     if context and context.get("topic"):
         bot_response += f" (Oh, we’re vibing on {context['topic']}—love that!)"
