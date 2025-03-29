@@ -1,0 +1,16 @@
+# Ignore large model files
+sharma-health-model/checkpoint-*/optimizer.pt
+sharma-health-model/checkpoint-*/model.safetensors
+sharma-health-model/model.safetensors
+sharma-health-model/tokenizer.json
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Log files
+*.log

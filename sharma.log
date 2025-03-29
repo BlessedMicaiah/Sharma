@@ -1,0 +1,323 @@
+2025-03-28 18:53:10,117 - INFO - Fine-tuned model and tokenizer loaded successfully
+2025-03-28 18:53:10,138 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 18:53:10,402 - INFO - TF-IDF matrix initialized
+2025-03-28 18:53:10,403 - INFO - Loaded 1 health memories from file
+2025-03-28 18:53:10,425 - WARNING -  * Debugger is active!
+2025-03-28 18:53:10,431 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 18:53:47,842 - INFO - Fine-tuned model and tokenizer loaded successfully
+2025-03-28 18:53:47,863 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 18:53:48,102 - INFO - TF-IDF matrix initialized
+2025-03-28 18:53:48,103 - INFO - Loaded 1 health memories from file
+2025-03-28 18:53:48,124 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-28 18:53:48,134 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-28 18:53:48,137 - INFO -  * Restarting with stat
+2025-03-28 18:53:55,688 - INFO - Fine-tuned model and tokenizer loaded successfully
+2025-03-28 18:53:55,708 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 18:53:55,937 - INFO - TF-IDF matrix initialized
+2025-03-28 18:53:55,938 - INFO - Loaded 1 health memories from file
+2025-03-28 18:53:55,949 - WARNING -  * Debugger is active!
+2025-03-28 18:53:55,957 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 18:55:43,449 - INFO - Index route accessed
+2025-03-28 18:55:43,455 - INFO - 127.0.0.1 - - [28/Mar/2025 18:55:43] "GET / HTTP/1.1" 200 -
+2025-03-28 18:55:43,738 - INFO - 127.0.0.1 - - [28/Mar/2025 18:55:43] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-28 18:55:43,742 - INFO - 127.0.0.1 - - [28/Mar/2025 18:55:43] "GET /static/js/script.js HTTP/1.1" 200 -
+2025-03-28 18:55:44,259 - INFO - 127.0.0.1 - - [28/Mar/2025 18:55:44] "[33mGET /api/history HTTP/1.1[0m" 404 -
+2025-03-28 18:55:52,247 - INFO - Chat API accessed
+2025-03-28 18:55:52,248 - INFO - Received user message: Hello
+2025-03-28 18:55:52,249 - INFO - Updated context: {'topic': None, 'user_health_profile': {}, 'ongoing_health_concerns': []}
+2025-03-28 18:55:52,250 - INFO - Tool detected: hello, args: 
+2025-03-28 18:55:52,250 - INFO - Greeting detected
+2025-03-28 18:55:52,250 - INFO - Bot response: Hey there! I’m Sharma, your friendly neonatal, pregnancy, and OB-GYN expert. What’s on your mind today?
+2025-03-28 18:55:52,251 - INFO - 127.0.0.1 - - [28/Mar/2025 18:55:52] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 18:56:03,747 - INFO - Chat API accessed
+2025-03-28 18:56:03,748 - INFO - Received user message: Whats up?
+2025-03-28 18:56:03,748 - INFO - Updated context: {'topic': None, 'user_health_profile': {}, 'ongoing_health_concerns': []}
+2025-03-28 18:56:03,748 - INFO - Tool detected: whats, args: up?
+2025-03-28 18:56:03,749 - INFO - Searching health_data.json for: Whats up?
+2025-03-28 18:56:03,756 - INFO - No match (score: 0.0), using model
+2025-03-28 18:56:05,012 - INFO - Model response: 4.5%
+2025-03-28 18:56:05,012 - INFO - Bot response: 4.5%
+2025-03-28 18:56:05,013 - INFO - 127.0.0.1 - - [28/Mar/2025 18:56:05] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 18:56:10,825 - INFO - Chat API accessed
+2025-03-28 18:56:10,826 - INFO - Received user message: Lol
+2025-03-28 18:56:10,826 - INFO - Updated context: {'topic': None, 'user_health_profile': {}, 'ongoing_health_concerns': []}
+2025-03-28 18:56:10,826 - INFO - Tool detected: lol, args: 
+2025-03-28 18:56:10,827 - INFO - Searching health_data.json for: Lol
+2025-03-28 18:56:10,833 - INFO - No match (score: 0.0), using model
+2025-03-28 18:56:16,239 - INFO - Model response: A male pallor appears early in the morning, with a white pallor and faint, yellowish, blackish and pale skin. The patient’s temperature is 37.7°C (98.9°F), pulse is 70/min, respirations are 15/min, and blood pressure is 126/65 mm Hg. Physical examination shows diffuse and diffuse facial wounds. The patient has no abnormal skin tone or is atypical in appearance. Laboratory studies show:
+Laprine volume: 38 mm Hg
+Leukocyte count: 11,000/mm3
+WBC: 14,000/mm3
+Which of the following does the patient need to treat?? 
+{'A': 'Bravital fever', 'B': 'Acute pancreatitis', 'C': 'Mammillary fever'},
+2025-03-28 18:56:16,240 - INFO - Bot response: A male pallor appears early in the morning, with a white pallor and faint, yellowish, blackish and pale skin. The patient’s temperature is 37.7°C (98.9°F), pulse is 70/min, respirations are 15/min, and blood pressure is 126/65 mm Hg. Physical examination shows diffuse and diffuse facial wounds. The patient has no abnormal skin tone or is atypical in appearance. Laboratory studies show:
+Laprine volume: 38 mm Hg
+Leukocyte count: 11,000/mm3
+WBC: 14,000/mm3
+Which of the following does the patient need to treat?? 
+{'A': 'Bravital fever', 'B': 'Acute pancreatitis', 'C': 'Mammillary fever'},
+2025-03-28 18:56:16,240 - INFO - 127.0.0.1 - - [28/Mar/2025 18:56:16] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 18:56:25,102 - INFO - Chat API accessed
+2025-03-28 18:56:25,103 - INFO - Received user message: Malaria
+2025-03-28 18:56:25,103 - INFO - Updated context: {'topic': None, 'user_health_profile': {}, 'ongoing_health_concerns': []}
+2025-03-28 18:56:25,103 - INFO - Tool detected: malaria, args: 
+2025-03-28 18:56:25,104 - INFO - Searching health_data.json for: Malaria
+2025-03-28 18:56:25,120 - INFO - No match (score: 0.32621771746021283), using model
+2025-03-28 18:56:31,252 - INFO - Model response: A newborn is born at 18 weeks' gestation at 30 weeks postpartum and has a soft neck and chest pain. She is also born at 35 weeks' gestation at 36 weeks' gestation. The newborn is born at 19 weeks' gestation at 36 weeks' gestation. The infant has had some type of illness all week. Which of the following is the most likely cause of this baby's condition?? 
+{'A': 'Defenseless hypertension', 'B': 'Inflammable hypertension', 'C': 'Defenseless hypertension', 'D': 'Defenseless hypertension'},
+2025-03-28 18:56:31,252 - INFO - Bot response: A newborn is born at 18 weeks' gestation at 30 weeks postpartum and has a soft neck and chest pain. She is also born at 35 weeks' gestation at 36 weeks' gestation. The newborn is born at 19 weeks' gestation at 36 weeks' gestation. The infant has had some type of illness all week. Which of the following is the most likely cause of this baby's condition?? 
+{'A': 'Defenseless hypertension', 'B': 'Inflammable hypertension', 'C': 'Defenseless hypertension', 'D': 'Defenseless hypertension'},
+2025-03-28 18:56:31,253 - INFO - 127.0.0.1 - - [28/Mar/2025 18:56:31] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 18:58:47,248 - INFO -  * Detected change in 'C:\\Users\\muchf\\CascadeProjects\\python-chatbot\\app.py', reloading
+2025-03-28 18:58:48,489 - INFO -  * Restarting with stat
+2025-03-28 18:58:56,702 - INFO - Model and tokenizer loaded
+2025-03-28 18:58:56,723 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 18:58:56,986 - INFO - TF-IDF matrix initialized
+2025-03-28 18:58:56,998 - WARNING -  * Debugger is active!
+2025-03-28 18:58:57,006 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 18:59:21,910 - INFO - Chat API accessed
+2025-03-28 18:59:21,911 - INFO - Processing message: Hello
+2025-03-28 18:59:21,911 - INFO - Context: {'topic': None}
+2025-03-28 18:59:21,912 - INFO - Tool detected: hello, args: 
+2025-03-28 18:59:21,912 - INFO - Greeting detected
+2025-03-28 18:59:21,912 - INFO - Bot response: Hey there! I’m Sharma, your friendly neonatal, pregnancy, and OB-GYN expert. What’s on your mind today?
+2025-03-28 18:59:21,913 - INFO - 127.0.0.1 - - [28/Mar/2025 18:59:21] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 18:59:29,262 - INFO - Chat API accessed
+2025-03-28 18:59:29,263 - INFO - Processing message: Gerrout
+2025-03-28 18:59:29,263 - INFO - Context: {'topic': None}
+2025-03-28 18:59:29,264 - INFO - Tool detected: gerrout, args: 
+2025-03-28 18:59:29,264 - INFO - Searching health_data.json for: Gerrout
+2025-03-28 18:59:29,273 - INFO - No match (score: 0.0), using model
+2025-03-28 18:59:35,583 - INFO - Model response: Q:A 17-year-old male presents to the physician with complications of the past week. His parents and health care provider were notified of the initial diagnosis several months ago. His temperature is 36.8°C (99.6°F), pulse is 40/min and respiratory rate is 36/min. The respiratory rate is 99/min. For this patient’s clinical history, the patient’s temperature is 90.6°C (98.0°F). Instruction for the patient is as follows:
+1. Pregnancy - Intravastatin
+2. Oral polyphenol
+3. Oral corticosteroids
+4. Oral anti-doping agents
+5. Which of the following is the most appropriate next step in management?"? 
+{'A': 'Direct anti-doping agent', 'B': 'Direct anti-doping agents', 'C': 'Direct anti-doping agents', 'D': 'Direct anti-doping agents'},
+2025-03-28 18:59:35,583 - INFO - Bot response: Q:A 17-year-old male presents to the physician with complications of the past week. His parents and health care provider were notified of the initial diagnosis several months ago. His temperature is 36.8°C (99.6°F), pulse is 40/min and respiratory rate is 36/min. The respiratory rate is 99/min. For this patient’s clinical history, the patient’s temperature is 90.6°C (98.0°F). Instruction for the patient is as follows:
+1. Pregnancy - Intravastatin
+2. Oral polyphenol
+3. Oral corticosteroids
+4. Oral anti-doping agents
+5. Which of the following is the most appropriate next step in management?"? 
+{'A': 'Direct anti-doping agent', 'B': 'Direct anti-doping agents', 'C': 'Direct anti-doping agents', 'D': 'Direct anti-doping agents'},
+2025-03-28 18:59:35,584 - INFO - 127.0.0.1 - - [28/Mar/2025 18:59:35] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 18:59:49,927 - INFO -  * Detected change in 'C:\\Users\\muchf\\CascadeProjects\\python-chatbot\\app.py', reloading
+2025-03-28 18:59:51,127 - INFO -  * Restarting with stat
+2025-03-28 18:59:59,068 - INFO - Model and tokenizer loaded
+2025-03-28 18:59:59,089 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:00:12,404 - INFO - Model and tokenizer loaded
+2025-03-28 19:00:12,422 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:00:12,647 - INFO - TF-IDF matrix initialized
+2025-03-28 19:00:12,669 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-28 19:00:12,670 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-28 19:00:12,672 - INFO -  * Restarting with stat
+2025-03-28 19:00:20,515 - INFO - Model and tokenizer loaded
+2025-03-28 19:00:20,534 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:00:20,764 - INFO - TF-IDF matrix initialized
+2025-03-28 19:00:20,778 - WARNING -  * Debugger is active!
+2025-03-28 19:00:20,788 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 19:05:30,001 - INFO - Index accessed
+2025-03-28 19:05:30,008 - INFO - 127.0.0.1 - - [28/Mar/2025 19:05:30] "GET / HTTP/1.1" 200 -
+2025-03-28 19:05:30,252 - INFO - 127.0.0.1 - - [28/Mar/2025 19:05:30] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-28 19:05:30,255 - INFO - 127.0.0.1 - - [28/Mar/2025 19:05:30] "[36mGET /static/js/script.js HTTP/1.1[0m" 304 -
+2025-03-28 19:05:30,736 - INFO - History accessed
+2025-03-28 19:05:30,736 - INFO - 127.0.0.1 - - [28/Mar/2025 19:05:30] "GET /api/history HTTP/1.1" 200 -
+2025-03-28 19:05:40,080 - INFO - Chat API accessed
+2025-03-28 19:05:40,081 - INFO - Processing message: Hello Sharma
+2025-03-28 19:05:40,082 - INFO - Context: {'topic': None}
+2025-03-28 19:05:40,082 - INFO - Tool detected: hello, args: sharma
+2025-03-28 19:05:40,083 - INFO - Searching health_data.json for: Hello Sharma
+2025-03-28 19:05:40,091 - INFO - No match (score: 0.0), using model
+2025-03-28 19:05:46,945 - INFO - Model response: Q:A 60-year-old man comes to my physician because of a severe episode of chills and tenderness related to a cough. He currently has a past alcohol history and reports that he has been playing soccer since he was a child. He began playing soccer with his parents while he was 13 years old. After his first medical visit of the home several months ago, he says he was unable to finish soccer. He describes his weight at this time and with his weight at the time, what’s the best advice?? 
+{'A': 'Take a trip over the border with the USA to see 2 healthy healthy children', 'B': 'Welp the baby, take a trip over the border with the USA to see 3 healthy children', 'C': 'Possess the baby, take a trip over the border with the USA to see 4 healthy children', 'D': 'Take a trip over the border with the USA to see 5 healthy children', 'E': 'Possess the baby, take a trip over
+2025-03-28 19:05:46,945 - INFO - Bot response: Q:A 60-year-old man comes to my physician because of a severe episode of chills and tenderness related to a cough. He currently has a past alcohol history and reports that he has been playing soccer since he was a child. He began playing soccer with his parents while he was 13 years old. After his first medical visit of the home several months ago, he says he was unable to finish soccer. He describes his weight at this time and with his weight at the time, what’s the best advice?? 
+{'A': 'Take a trip over the border with the USA to see 2 healthy healthy children', 'B': 'Welp the baby, take a trip over the border with the USA to see 3 healthy children', 'C': 'Possess the baby, take a trip over the border with the USA to see 4 healthy children', 'D': 'Take a trip over the border with the USA to see 5 healthy children', 'E': 'Possess the baby, take a trip over
+2025-03-28 19:05:46,946 - INFO - 127.0.0.1 - - [28/Mar/2025 19:05:46] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:10:35,078 - INFO - Model and tokenizer loaded
+2025-03-28 19:10:35,100 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:10:35,328 - INFO - TF-IDF matrix initialized
+2025-03-28 19:10:35,355 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-28 19:10:35,355 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-28 19:10:35,358 - INFO -  * Restarting with stat
+2025-03-28 19:10:42,744 - INFO - Model and tokenizer loaded
+2025-03-28 19:10:42,762 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:10:43,063 - INFO - TF-IDF matrix initialized
+2025-03-28 19:10:43,077 - WARNING -  * Debugger is active!
+2025-03-28 19:10:43,083 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 19:12:29,292 - INFO - Index accessed
+2025-03-28 19:12:29,302 - INFO - 127.0.0.1 - - [28/Mar/2025 19:12:29] "GET / HTTP/1.1" 200 -
+2025-03-28 19:12:29,588 - INFO - 127.0.0.1 - - [28/Mar/2025 19:12:29] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-03-28 19:12:29,649 - INFO - 127.0.0.1 - - [28/Mar/2025 19:12:29] "GET /static/js/script.js HTTP/1.1" 200 -
+2025-03-28 19:12:30,155 - INFO - History accessed
+2025-03-28 19:12:30,156 - INFO - 127.0.0.1 - - [28/Mar/2025 19:12:30] "GET /api/history HTTP/1.1" 200 -
+2025-03-28 19:12:35,095 - INFO - Chat API accessed
+2025-03-28 19:12:35,096 - INFO - Processing message: Hey
+2025-03-28 19:12:35,097 - INFO - Context: {'topic': None}
+2025-03-28 19:12:35,097 - INFO - Tool detected: hey, args: 
+2025-03-28 19:12:35,098 - INFO - Greeting detected
+2025-03-28 19:12:35,098 - INFO - Bot response: Hey there! I’m Sharma, your go-to pal for neonatal, pregnancy, and OB-GYN chats. What’s on your mind today—something about babies, bumps, or women’s health?
+2025-03-28 19:12:35,107 - INFO - 127.0.0.1 - - [28/Mar/2025 19:12:35] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:12:44,970 - INFO - Chat API accessed
+2025-03-28 19:12:44,971 - INFO - Processing message: Can you tell me about pregnancy
+2025-03-28 19:12:44,971 - INFO - Context: {'topic': 'pregnancy'}
+2025-03-28 19:12:44,972 - INFO - Tool detected: pregnancy, args: 
+2025-03-28 19:12:44,996 - INFO - 127.0.0.1 - - [28/Mar/2025 19:12:44] "[35m[1mPOST /api/chat HTTP/1.1[0m" 500 -
+2025-03-28 19:12:59,238 - INFO - Chat API accessed
+2025-03-28 19:12:59,241 - INFO - Processing message: Patient
+2025-03-28 19:12:59,241 - INFO - Context: {'topic': 'pregnancy'}
+2025-03-28 19:12:59,241 - INFO - Tool detected: patient, args: 
+2025-03-28 19:12:59,242 - INFO - Non-relevant query detected
+2025-03-28 19:12:59,242 - INFO - Bot response: Hey, I’m all about neonatal, pregnancy, and OB-GYN stuff! That doesn’t quite fit my wheelhouse—got any questions about babies or pregnancy instead?
+2025-03-28 19:12:59,243 - INFO - 127.0.0.1 - - [28/Mar/2025 19:12:59] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:13:23,631 - INFO - Chat API accessed
+2025-03-28 19:13:23,631 - INFO - Processing message: What causes malaria in Babies?
+2025-03-28 19:13:23,632 - INFO - Context: {'topic': 'pregnancy'}
+2025-03-28 19:13:23,632 - INFO - Tool detected: what, args: causes malaria in babies?
+2025-03-28 19:13:23,632 - INFO - Non-relevant query detected
+2025-03-28 19:13:23,633 - INFO - Bot response: Hey, I’m all about neonatal, pregnancy, and OB-GYN stuff! That doesn’t quite fit my wheelhouse—got any questions about babies or pregnancy instead?
+2025-03-28 19:13:23,633 - INFO - 127.0.0.1 - - [28/Mar/2025 19:13:23] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:13:34,139 - INFO - Chat API accessed
+2025-03-28 19:13:34,140 - INFO - Processing message: Wait
+2025-03-28 19:13:34,140 - INFO - Context: {'topic': 'pregnancy'}
+2025-03-28 19:13:34,141 - INFO - Tool detected: wait, args: 
+2025-03-28 19:13:34,141 - INFO - Non-relevant query detected
+2025-03-28 19:13:34,141 - INFO - Bot response: Hey, I’m all about neonatal, pregnancy, and OB-GYN stuff! That doesn’t quite fit my wheelhouse—got any questions about babies or pregnancy instead?
+2025-03-28 19:13:34,142 - INFO - 127.0.0.1 - - [28/Mar/2025 19:13:34] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:20:55,595 - INFO - Model and tokenizer loaded
+2025-03-28 19:20:55,614 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:20:55,846 - INFO - TF-IDF matrix initialized
+2025-03-28 19:20:55,865 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-28 19:20:55,865 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-28 19:20:55,867 - INFO -  * Restarting with stat
+2025-03-28 19:21:03,158 - INFO - Model and tokenizer loaded
+2025-03-28 19:21:03,177 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:21:03,408 - INFO - TF-IDF matrix initialized
+2025-03-28 19:21:03,424 - WARNING -  * Debugger is active!
+2025-03-28 19:21:03,429 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 19:26:08,116 - INFO -  * Detected change in 'C:\\Users\\muchf\\CascadeProjects\\Sharma\\app.py', reloading
+2025-03-28 19:26:09,267 - INFO -  * Restarting with stat
+2025-03-28 19:28:15,474 - INFO - sharma-health-model loaded
+2025-03-28 19:28:15,496 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:28:15,732 - INFO - TF-IDF matrix initialized
+2025-03-28 19:28:15,762 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-28 19:28:15,763 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-28 19:28:15,765 - INFO -  * Restarting with stat
+2025-03-28 19:28:22,953 - INFO - sharma-health-model loaded
+2025-03-28 19:28:22,972 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:28:23,202 - INFO - TF-IDF matrix initialized
+2025-03-28 19:28:23,216 - WARNING -  * Debugger is active!
+2025-03-28 19:28:23,224 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 19:29:04,832 - INFO - Index accessed
+2025-03-28 19:29:04,838 - INFO - 127.0.0.1 - - [28/Mar/2025 19:29:04] "GET / HTTP/1.1" 200 -
+2025-03-28 19:29:05,140 - INFO - 127.0.0.1 - - [28/Mar/2025 19:29:05] "[36mGET /static/js/script.js HTTP/1.1[0m" 304 -
+2025-03-28 19:29:05,157 - INFO - 127.0.0.1 - - [28/Mar/2025 19:29:05] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-28 19:29:05,722 - INFO - History accessed
+2025-03-28 19:29:05,723 - INFO - 127.0.0.1 - - [28/Mar/2025 19:29:05] "GET /api/history HTTP/1.1" 200 -
+2025-03-28 19:29:17,189 - INFO - Chat API accessed
+2025-03-28 19:29:17,190 - INFO - Processing message: hello Sharma
+2025-03-28 19:29:17,190 - INFO - Context: {'topic': None, 'last_query': 'hello Sharma'}
+2025-03-28 19:29:17,191 - INFO - Tool detected: hello, args: sharma
+2025-03-28 19:29:17,192 - INFO - Greeting detected
+2025-03-28 19:29:17,192 - INFO - Bot response: Hey there! I’m Sharma, your go-to pal for neonatal, pregnancy, and OB-GYN chats. What’s on your mind—something about babies, bumps, or women’s health?
+2025-03-28 19:29:17,192 - INFO - 127.0.0.1 - - [28/Mar/2025 19:29:17] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:29:29,301 - INFO - Chat API accessed
+2025-03-28 19:29:29,301 - INFO - Processing message: how are you doing?
+2025-03-28 19:29:29,302 - INFO - Context: {'topic': None, 'last_query': 'how are you doing?'}
+2025-03-28 19:29:29,302 - INFO - Tool detected: how, args: are you doing?
+2025-03-28 19:29:30,111 - INFO - sharma-health-model intent: classify the intent of this query as 'relevant' (neonatal, pregnancy, ob-gyn) or 'irrelevant'. respond with 'relevant' or 'irrelevant'.
+query: how are you doing?
+2025-03-28 19:29:30,111 - INFO - Non-relevant query detected
+2025-03-28 19:29:30,112 - INFO - Bot response: Hey, I’m all about neonatal, pregnancy, and OB-GYN goodies! That’s a bit outside my lane—how about we talk babies or pregnancy instead? What’s your next move?
+2025-03-28 19:29:30,112 - INFO - 127.0.0.1 - - [28/Mar/2025 19:29:30] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:29:48,641 - INFO - Chat API accessed
+2025-03-28 19:29:48,642 - INFO - Processing message: Babies immortality
+2025-03-28 19:29:48,642 - INFO - Context: {'topic': None, 'last_query': 'Babies immortality'}
+2025-03-28 19:29:48,642 - INFO - Tool detected: babies, args: immortality
+2025-03-28 19:29:48,780 - INFO - sharma-health-model intent: classify the intent of this query as 'relevant' (neonatal, pregnancy, ob-gyn) or 'irrelevant'. respond with 'relevant' or 'irrelevant'.
+query: babies immortality
+2025-03-28 19:29:48,781 - INFO - Non-relevant query detected
+2025-03-28 19:29:48,781 - INFO - Bot response: Hey, I caught 'baby' in there! I’m all about neonatal stuff—wanna chat about newborn health instead? Maybe something like jaundice or feeding?
+2025-03-28 19:29:48,782 - INFO - 127.0.0.1 - - [28/Mar/2025 19:29:48] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:30:04,160 - INFO - Chat API accessed
+2025-03-28 19:30:04,161 - INFO - Processing message: whats ectopic pregnancy
+2025-03-28 19:30:04,161 - INFO - Context: {'topic': 'pregnancy', 'last_query': 'whats ectopic pregnancy'}
+2025-03-28 19:30:04,162 - INFO - Tool detected: whats, args: ectopic pregnancy
+2025-03-28 19:30:04,405 - INFO - sharma-health-model intent: classify the intent of this query as 'relevant' (neonatal, pregnancy, ob-gyn) or 'irrelevant'. respond with 'relevant' or 'irrelevant'.
+query: whats ectopic pregnancy?? 
+{'
+2025-03-28 19:30:04,406 - INFO - Searching health_data.json for: whats ectopic pregnancy
+2025-03-28 19:30:05,996 - INFO - sharma-health-model refined query: 1st-grade pregnancy
+{'A': 'Pregnancy', 'B': 'Pregnancy', 'C': 'Pregnancy', 'D': 'Pregnancy', 'E': 'Pregnancy'},
+Answer: 1st-grade pregnancy
+2025-03-28 19:30:05,997 - INFO - Calling DeepSeek API with refined query: 1st-grade pregnancy
+{'A': 'Pregnancy', 'B': 'Pregnancy', 'C': 'Pregnancy', 'D': 'Pregnancy', 'E': 'Pregnancy'},
+Answer: 1st-grade pregnancy
+2025-03-28 19:30:17,011 - INFO - 127.0.0.1 - - [28/Mar/2025 19:30:17] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:30:46,639 - INFO - Chat API accessed
+2025-03-28 19:30:46,639 - INFO - Processing message: i meant ectopic pregnancy
+2025-03-28 19:30:46,640 - INFO - Context: {'topic': 'pregnancy', 'last_query': 'i meant ectopic pregnancy'}
+2025-03-28 19:30:46,640 - INFO - Tool detected: i, args: meant ectopic pregnancy
+2025-03-28 19:30:46,863 - INFO - sharma-health-model intent: classify the intent of this query as 'relevant' (neonatal, pregnancy, ob-gyn) or 'irrelevant'. respond with 'relevant' or 'irrelevant'.
+query: i meant ectopic pregnancy. which of the
+2025-03-28 19:30:46,864 - INFO - Searching health_data.json for: i meant ectopic pregnancy
+2025-03-28 19:30:47,065 - INFO - sharma-health-model refined query: 1 day ago
+2025-03-28 19:30:47,065 - INFO - Calling DeepSeek API with refined query: 1 day ago
+2025-03-28 19:30:55,980 - INFO - 127.0.0.1 - - [28/Mar/2025 19:30:55] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:34:31,596 - INFO -  * Detected change in 'C:\\Users\\muchf\\CascadeProjects\\Sharma\\app.py', reloading
+2025-03-28 19:34:32,830 - INFO -  * Restarting with stat
+2025-03-28 19:34:56,856 - INFO - sharma-health-model loaded
+2025-03-28 19:34:56,883 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:34:57,120 - INFO - TF-IDF matrix initialized
+2025-03-28 19:34:57,144 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-28 19:34:57,144 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-28 19:34:57,147 - INFO -  * Restarting with stat
+2025-03-28 19:35:04,935 - INFO - sharma-health-model loaded
+2025-03-28 19:35:04,953 - INFO - Loaded 2685 entries from health_data.json
+2025-03-28 19:35:05,191 - INFO - TF-IDF matrix initialized
+2025-03-28 19:35:05,204 - WARNING -  * Debugger is active!
+2025-03-28 19:35:05,222 - INFO -  * Debugger PIN: 141-893-316
+2025-03-28 19:36:44,178 - INFO - Index accessed
+2025-03-28 19:36:44,185 - INFO - 127.0.0.1 - - [28/Mar/2025 19:36:44] "GET / HTTP/1.1" 200 -
+2025-03-28 19:36:44,480 - INFO - 127.0.0.1 - - [28/Mar/2025 19:36:44] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-28 19:36:44,482 - INFO - 127.0.0.1 - - [28/Mar/2025 19:36:44] "[36mGET /static/js/script.js HTTP/1.1[0m" 304 -
+2025-03-28 19:36:44,994 - INFO - History accessed
+2025-03-28 19:36:44,995 - INFO - 127.0.0.1 - - [28/Mar/2025 19:36:44] "GET /api/history HTTP/1.1" 200 -
+2025-03-28 19:37:03,854 - INFO - Chat API accessed
+2025-03-28 19:37:03,855 - INFO - Processing message: Hello Sharma!
+2025-03-28 19:37:03,855 - INFO - Context: {'topic': None, 'last_query': 'Hello Sharma!'}
+2025-03-28 19:37:03,856 - INFO - Tool detected: hello, args: sharma!
+2025-03-28 19:37:04,195 - INFO - sharma-health-model intent: classify the intent of this query as 'relevant' (neonatal, pregnancy, ob-gyn) or 'irrelevant'. respond with 'relevant' or 'irrelevant'.
+query: hello sharma!
+2025-03-28 19:37:04,196 - INFO - Searching health_data.json for: Hello Sharma!
+2025-03-28 19:37:05,710 - INFO - sharma-health-model refined query: {'A': 'I am a medical expert specializing in neonatal, pregnancy, or OB-GYN topics', 'B': 'I am a medical expert specializing in neonatal, pregnancy, or OB-GYN topics', 'C': 'I
+2025-03-28 19:37:05,711 - INFO - Calling DeepSeek API with refined query: {'A': 'I am a medical expert specializing in neonatal, pregnancy, or OB-GYN topics', 'B': 'I am a medical expert specializing in neonatal, pregnancy, or OB-GYN topics', 'C': 'I
+2025-03-28 19:37:14,394 - INFO - 127.0.0.1 - - [28/Mar/2025 19:37:14] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:37:35,532 - INFO - Chat API accessed
+2025-03-28 19:37:35,533 - INFO - Processing message: What’s the latest on neonatal care for preemies?
+2025-03-28 19:37:35,533 - INFO - Context: {'topic': 'neonatal', 'last_query': 'What’s the latest on neonatal care for preemies?'}
+2025-03-28 19:37:35,533 - INFO - Tool detected: what, args: ’s the latest on neonatal care for preemies?
+2025-03-28 19:37:35,544 - ERROR - sharma-health-model intent error: Input length of input_ids is 55, but `max_length` is set to 50. This can lead to unexpected behavior. You should consider increasing `max_length` or, better yet, setting `max_new_tokens`.
+2025-03-28 19:37:35,545 - INFO - Searching health_data.json for: What’s the latest on neonatal care for preemies?
+2025-03-28 19:37:35,750 - INFO - sharma-health-model refined query: 1 day ago
+2025-03-28 19:37:35,751 - INFO - Calling DeepSeek API with refined query: 1 day ago
+2025-03-28 19:37:44,784 - INFO - 127.0.0.1 - - [28/Mar/2025 19:37:44] "POST /api/chat HTTP/1.1" 200 -
+2025-03-28 19:38:40,087 - INFO - Chat API accessed
+2025-03-28 19:38:40,087 - INFO - Processing message: What do you know about infant mortality?
+2025-03-28 19:38:40,088 - INFO - Context: {'topic': 'neonatal', 'last_query': 'What do you know about infant mortality?'}
+2025-03-28 19:38:40,088 - INFO - Tool detected: what, args: do you know about infant mortality?
+2025-03-28 19:38:40,214 - INFO - sharma-health-model intent: classify the intent of this query as 'relevant' (neonatal, pregnancy, ob-gyn) or 'irrelevant'. respond with 'relevant' or 'irrelevant'.
+query: what do you know about infant mortality?
+2025-03-28 19:38:40,215 - INFO - Searching health_data.json for: What do you know about infant mortality?
+2025-03-28 19:38:41,693 - INFO - sharma-health-model refined query: 1.0 million U.S. births
+{'A': 'Aortic valve failure', 'B': 'Aortic valve failure', 'C': 'Aortic valve failure', 'D': 'Aortic
+2025-03-28 19:38:41,694 - INFO - Calling DeepSeek API with refined query: 1.0 million U.S. births
+{'A': 'Aortic valve failure', 'B': 'Aortic valve failure', 'C': 'Aortic valve failure', 'D': 'Aortic
+2025-03-28 19:38:49,276 - INFO - 127.0.0.1 - - [28/Mar/2025 19:38:49] "POST /api/chat HTTP/1.1" 200 -

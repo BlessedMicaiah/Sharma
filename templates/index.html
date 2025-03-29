@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharma - Maternal & Child Health Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Sharma</h1>
+            <p>Your Maternal & Child Health Assistant</p>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    <!-- <p>Hello! I'm Sharma, your maternal and child health assistant. I can help with OB-GYN information, pregnancy guidance, neonatal care, children's health, and maternal wellness. How can I assist you today?</p> -->
+                </div>
+                <div class="message-time">{{ current_time }}</div>
+            </div>
+        </div>
+        <div class="tools-container" id="tools-container">
+            <div class="tools-header">
+                <h3>Maternal & Child Health Tools</h3>
+            </div>
+            <div class="tools-list">
+                <button class="tool-button" data-tool="obgyn">OB-GYN</button>
+                <button class="tool-button" data-tool="pregnancy">Pregnancy</button>
+                <button class="tool-button" data-tool="neonatal">Neonatal</button>
+                <button class="tool-button" data-tool="children">Children</button>
+                <button class="tool-button" data-tool="mothers">Mothers</button>
+                <button class="tool-button" data-tool="remember">Remember</button>
+                <button class="tool-button" data-tool="recall">Recall</button>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="user-input" placeholder="Ask about maternal or child health..." autocomplete="off">
+            <button id="send-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
