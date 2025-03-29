@@ -23,15 +23,13 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # DeepSeek API setup
-DEEPSEEK_API_KEY = "sk-732ea226899242339e5d25944abbafd7"
-DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-732ea226899242339e5d25944abbafd7")
 
 # Load sharma-health-model
 MODEL_PATH = "sharma-health-model"
 try:
-    # Check if we're in production (Render) environment
     if os.environ.get('RENDER'):
-        logger.info("Running in Render environment, using DeepSeek API instead of local model")
+        logger.info("Running in Render environment, using DeepSeek API only")
         model, tokenizer = None, None
     else:
         model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
@@ -46,7 +44,6 @@ except Exception as e:
 # Load health_data.json
 DATA_PATH = "health_data.json"
 try:
-    # Create an empty DataFrame if the file doesn't exist (for Render deployment)
     if not os.path.exists(DATA_PATH):
         logger.warning(f"{DATA_PATH} not found, creating empty DataFrame")
         health_data = pd.DataFrame(columns=["input", "output"])
@@ -63,7 +60,6 @@ if not health_data.empty and "input" in health_data.columns and len(health_data[
     tfidf_matrix = tfidf_vectorizer.fit_transform(health_data["input"])
     logger.info("TF-IDF matrix initialized")
 else:
-    # Create empty vectorizer and matrix if no data
     tfidf_vectorizer = TfidfVectorizer(stop_words="english")
     tfidf_matrix = None
     logger.warning("Empty health_data, TF-IDF matrix not initialized")
@@ -136,7 +132,7 @@ class HealthContext:
         self.current_context = {"topic": None, "last_query": None}
     
     def update_context(self, message):
-        health_topics = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "ectopic"]
+        health_topics = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "ectopic", "mortality", "infant"]
         for topic in health_topics:
             if topic in message.lower():
                 self.current_context["topic"] = topic
@@ -215,30 +211,17 @@ def generate_health_response(message, tool_response=None, context=None):
         logger.info("Greeting detected")
         return "Hey there! I’m Sharma, your go-to pal for neonatal, pregnancy, and OB-GYN chats. What’s on your mind—something about babies, bumps, or women’s health?\n\nWanna save this chat? Just say 'remember this'!"
 
-    # Step 1: Use sharma-health-model to analyze relevance and intent
-    relevant_keywords = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "newborn", "ectopic"]
+    # Step 1: Check relevance
+    relevant_keywords = ["neonatal", "pregnancy", "obgyn", "baby", "birth", "fetal", "labor", "newborn", "ectopic", "mortality", "infant"]
     has_relevant_keyword = any(keyword in message.lower() for keyword in relevant_keywords)
     
-    intent_prompt = f"""Classify the intent of this query as 'relevant' (neonatal, pregnancy, OB-GYN) or 'irrelevant'. Respond with 'relevant' or 'irrelevant'.
-Query: {message}"""
-    intent = "irrelevant"
-    if model and tokenizer:
-        try:
-            inputs = tokenizer(intent_prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
-            outputs = model.generate(**inputs, max_length=50, temperature=0.7, pad_token_id=tokenizer.eos_token_id)
-            intent = tokenizer.decode(outputs[0], skip_special_tokens=True).strip().lower()
-            logger.info(f"sharma-health-model intent: {intent}")
-        except Exception as e:
-            logger.error(f"sharma-health-model intent error: {e}")
-            intent = "irrelevant" if not has_relevant_keyword else "relevant"
-
-    if intent == "irrelevant" and not has_relevant_keyword:
+    if not has_relevant_keyword:
         logger.info("Non-relevant query detected")
         if "baby" in message.lower() or "babies" in message.lower():
             return "Hey, I caught 'baby' in there! I’m all about neonatal stuff—wanna chat about newborn health instead? Maybe something like jaundice or feeding?\n\nWanna save this chat? Just say 'remember this'!"
         return "Hey, I’m all about neonatal, pregnancy, and OB-GYN goodies! That’s a bit outside my lane—how about we talk babies or pregnancy instead? What’s your next move?\n\nWanna save this chat? Just say 'remember this'!"
 
-    # Step 2: Search health_data.json if TF-IDF matrix is available
+    # Step 2: Search health_data.json if available
     if tfidf_matrix is not None:
         logger.info(f"Searching health_data.json for: {message}")
         try:
@@ -253,43 +236,34 @@ Query: {message}"""
                 logger.info(f"Match found: {matched_input} (score: {similarity_score})")
                 if isinstance(matched_output, dict):
                     options = "\n".join([f"{k}: {v}" for k, v in matched_output.items()])
-                    bot_response = f"Alright, '{message}' sounds like a puzzle! Here's what I dug up:\n{options}\nWhat do you think fits best—or should we dig deeper into something neonatal or pregnancy-related?\n\nWanna save this chat? Just say 'remember this'!"
-                    return bot_response
-                else:
-                    bot_response = f"Here's the scoop on '{message}': {matched_output}. Pretty neat, huh? Want me to expand on that or switch gears?\n\nWanna save this chat? Just say 'remember this'!"
-                    return bot_response
+                    return f"Alright, '{message}' sounds like a puzzle! Here's what I dug up:\n{options}\nWhat do you think fits best—or should we dig deeper?\n\nWanna save this chat? Just say 'remember this'!"
+                return f"Here's the scoop on '{message}': {matched_output}. Pretty neat, huh? Want me to expand on that or switch gears?\n\nWanna save this chat? Just say 'remember this'!"
         except Exception as e:
             logger.error(f"Error in TF-IDF search: {e}")
-            # Continue to next step if search fails
-    else:
-        logger.warning("TF-IDF matrix not available, skipping health_data search")
 
-    # Step 3: Use sharma-health-model to refine the prompt
-    refine_prompt = f"""You are an agentic AI assistant. Refine this query into a clear, specific question about neonatal, pregnancy, or OB-GYN topics. Keep it concise and relevant.
+    # Step 3: Refine query with sharma-health-model
+    refine_prompt = f"""Refine this query into a clear, specific question about neonatal, pregnancy, or OB-GYN topics. Keep it concise, relevant, and true to the original intent.
 Query: {message}
 Refined:"""
     refined_query = message
     if model and tokenizer:
         try:
             inputs = tokenizer(refine_prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
-            outputs = model.generate(**inputs, max_length=100, temperature=0.8, pad_token_id=tokenizer.eos_token_id)
+            outputs = model.generate(**inputs, max_new_tokens=50, temperature=0.8, pad_token_id=tokenizer.eos_token_id)
             refined_query = tokenizer.decode(outputs[0], skip_special_tokens=True).split("Refined:")[1].strip()
             logger.info(f"sharma-health-model refined query: {refined_query}")
         except Exception as e:
             logger.error(f"sharma-health-model refine error: {e}")
-            refined_query = message  # Fallback to original
+            refined_query = message
 
-    # Step 4: Call DeepSeek with refined query
+    # Step 4: Call DeepSeek
     logger.info(f"Calling DeepSeek API with refined query: {refined_query}")
-    prompt = f"""You are Sharma, a super friendly, proactive medical expert focused only on neonatal, pregnancy, and OB-GYN topics. Respond in a warm, conversational tone with flair. Be agentic—anticipate needs, suggest next steps, and keep it strictly relevant to neonatal, pregnancy, or OB-GYN. If vague, ask a fun follow-up. Do NOT misinterpret terms like 'ectopic' or invent terms like '1st-grade pregnancy'.
+    prompt = f"""You are Sharma, a proactive, friendly medical expert focused ONLY on neonatal, pregnancy, and OB-GYN topics. Respond in a warm, conversational tone with flair. Be agentic—anticipate needs, suggest next steps, and stay strictly relevant. If vague, ask a targeted follow-up. Do NOT invent terms or stray off-topic.
 Question: {refined_query}
 Answer:"""
     payload = {
         "model": "deepseek-chat",
-        "messages": [
-            {"role": "system", "content": prompt},
-            {"role": "user", "content": refined_query}
-        ],
+        "messages": [{"role": "system", "content": prompt}, {"role": "user", "content": refined_query}],
         "max_tokens": 300,
         "temperature": 0.9
     }
@@ -299,35 +273,24 @@ Answer:"""
         response = requests.post(DEEPSEEK_URL, json=payload, headers=headers)
         response.raise_for_status()
         response_data = response.json()
-        logger.info(f"DeepSeek raw response: {response_data}")
+        logger.info(f"DeepSeek raw response: {json.dumps(response_data)}")
         if "choices" in response_data and response_data["choices"]:
             bot_response = response_data["choices"][0]["message"]["content"].strip()
             logger.info(f"DeepSeek response: {bot_response}")
         else:
-            bot_response = "Hmm, DeepSeek's being shy! Let's pivot—what's your next neonatal or pregnancy question?\n\nWanna save this chat? Just say 'remember this'!"
+            bot_response = "Hmm, DeepSeek’s being shy! Let’s pivot—what’s your next neonatal or pregnancy question?\n\nWanna save this chat? Just say 'remember this'!"
             logger.error(f"Invalid DeepSeek response: {response_data}")
     except requests.RequestException as e:
         logger.error(f"DeepSeek API error: {e}")
-        if model and tokenizer:
-            try:
-                inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
-                outputs = model.generate(**inputs, max_length=200, temperature=0.9, pad_token_id=tokenizer.eos_token_id)
-                bot_response = tokenizer.decode(outputs[0], skip_special_tokens=True).split("Answer:")[1].strip()
-                logger.info(f"Fallback sharma-health-model response: {bot_response}")
-            except Exception as e:
-                logger.error(f"Fallback model error: {e}")
-                bot_response = "Whoops, both my brains are hiccupping! Got any baby or pregnancy questions I can tackle with my notes?\n\nWanna save this chat? Just say 'remember this'!"
-        else:
-            bot_response = "I'm having trouble connecting to my knowledge source right now. Let's try a different question about neonatal care, pregnancy, or OB-GYN topics!\n\nWanna save this chat? Just say 'remember this'!"
+        bot_response = "Oops, I’m having trouble connecting right now! Let’s try a neonatal, pregnancy, or OB-GYN question—what’s on your mind?\n\nWanna save this chat? Just say 'remember this'!"
 
     if context and context.get("topic"):
-        bot_response += f" (Oh, we're vibing on {context['topic']}—love that!)"
+        bot_response += f" (Oh, we’re vibing on {context['topic']}—love that!)"
     
     memories = memory_system.get_memory(message)
     if memories:
-        bot_response += "\n\nBy the way, I've got some notes:\n" + "\n".join([f"• {m['value']}" for m in memories])
-    else:
-        bot_response += "\n\nWanna save this chat in my memory bank? Just say 'remember this'!"
+        bot_response += "\n\nBy the way, I’ve got some notes:\n" + "\n".join([f"• {m['value']}" for m in memories])
+    bot_response += "\n\nWanna save this chat? Just say 'remember this'!"
     return bot_response
 
 if __name__ == '__main__':
