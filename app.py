@@ -29,11 +29,16 @@ DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 # Load sharma-health-model
 MODEL_PATH = "sharma-health-model"
 try:
-    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-    logger.info("sharma-health-model loaded")
+    # Check if we're in production (Render) environment
+    if os.environ.get('RENDER'):
+        logger.info("Running in Render environment, using DeepSeek API instead of local model")
+        model, tokenizer = None, None
+    else:
+        model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+        logger.info("sharma-health-model loaded")
 except Exception as e:
     logger.error(f"Error loading sharma-health-model: {e}")
     model, tokenizer = None, None
@@ -41,16 +46,27 @@ except Exception as e:
 # Load health_data.json
 DATA_PATH = "health_data.json"
 try:
-    health_data = pd.read_json(DATA_PATH)
-    logger.info(f"Loaded {len(health_data)} entries from health_data.json")
+    # Create an empty DataFrame if the file doesn't exist (for Render deployment)
+    if not os.path.exists(DATA_PATH):
+        logger.warning(f"{DATA_PATH} not found, creating empty DataFrame")
+        health_data = pd.DataFrame(columns=["input", "output"])
+    else:
+        health_data = pd.read_json(DATA_PATH)
+        logger.info(f"Loaded {len(health_data)} entries from health_data.json")
 except Exception as e:
     logger.error(f"Error loading health_data.json: {e}")
     health_data = pd.DataFrame(columns=["input", "output"])
 
 # Preprocess health_data
-tfidf_vectorizer = TfidfVectorizer(stop_words="english")
-tfidf_matrix = tfidf_vectorizer.fit_transform(health_data["input"])
-logger.info("TF-IDF matrix initialized")
+if not health_data.empty and "input" in health_data.columns and len(health_data["input"]) > 0:
+    tfidf_vectorizer = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = tfidf_vectorizer.fit_transform(health_data["input"])
+    logger.info("TF-IDF matrix initialized")
+else:
+    # Create empty vectorizer and matrix if no data
+    tfidf_vectorizer = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = None
+    logger.warning("Empty health_data, TF-IDF matrix not initialized")
 
 # Conversation history
 conversation_history = []
@@ -222,88 +238,96 @@ Query: {message}"""
             return "Hey, I caught 'baby' in there! I’m all about neonatal stuff—wanna chat about newborn health instead? Maybe something like jaundice or feeding?\n\nWanna save this chat? Just say 'remember this'!"
         return "Hey, I’m all about neonatal, pregnancy, and OB-GYN goodies! That’s a bit outside my lane—how about we talk babies or pregnancy instead? What’s your next move?\n\nWanna save this chat? Just say 'remember this'!"
 
-    # Step 2: Search health_data.json
-    logger.info(f"Searching health_data.json for: {message}")
-    query_vec = tfidf_vectorizer.transform([message.lower()])
-    similarities = cosine_similarity(query_vec, tfidf_matrix).flatten()
-    best_match_idx = similarities.argmax()
-    similarity_score = similarities[best_match_idx]
-
-    if similarity_score > 0.6:
-        matched_input = health_data.iloc[best_match_idx]["input"]
-        matched_output = health_data.iloc[best_match_idx]["output"]
-        logger.info(f"Match found: {matched_input} (score: {similarity_score})")
-        if isinstance(matched_output, dict):
-            options = "\n".join([f"{k}: {v}" for k, v in matched_output.items()])
-            bot_response = f"Alright, '{message}' sounds like a puzzle! Here’s what I dug up:\n{options}\nWhat do you think fits best—or should we dig deeper into something neonatal or pregnancy-related?\n\nWanna save this chat? Just say 'remember this'!"
-        else:
-            bot_response = f"Here’s the scoop on '{message}': {matched_output}. Pretty neat, huh? Want me to expand on that or switch gears?\n\nWanna save this chat? Just say 'remember this'!"
+    # Step 2: Search health_data.json if TF-IDF matrix is available
+    if tfidf_matrix is not None:
+        logger.info(f"Searching health_data.json for: {message}")
+        try:
+            query_vec = tfidf_vectorizer.transform([message.lower()])
+            similarities = cosine_similarity(query_vec, tfidf_matrix).flatten()
+            best_match_idx = similarities.argmax()
+            similarity_score = similarities[best_match_idx]
+            
+            if similarity_score > 0.6:
+                matched_input = health_data.iloc[best_match_idx]["input"]
+                matched_output = health_data.iloc[best_match_idx]["output"]
+                logger.info(f"Match found: {matched_input} (score: {similarity_score})")
+                if isinstance(matched_output, dict):
+                    options = "\n".join([f"{k}: {v}" for k, v in matched_output.items()])
+                    bot_response = f"Alright, '{message}' sounds like a puzzle! Here's what I dug up:\n{options}\nWhat do you think fits best—or should we dig deeper into something neonatal or pregnancy-related?\n\nWanna save this chat? Just say 'remember this'!"
+                    return bot_response
+                else:
+                    bot_response = f"Here's the scoop on '{message}': {matched_output}. Pretty neat, huh? Want me to expand on that or switch gears?\n\nWanna save this chat? Just say 'remember this'!"
+                    return bot_response
+        except Exception as e:
+            logger.error(f"Error in TF-IDF search: {e}")
+            # Continue to next step if search fails
     else:
-        # Step 3: Use sharma-health-model to refine the prompt
-        refine_prompt = f"""You are an agentic AI assistant. Refine this query into a clear, specific question about neonatal, pregnancy, or OB-GYN topics. Keep it concise and relevant.
+        logger.warning("TF-IDF matrix not available, skipping health_data search")
+
+    # Step 3: Use sharma-health-model to refine the prompt
+    refine_prompt = f"""You are an agentic AI assistant. Refine this query into a clear, specific question about neonatal, pregnancy, or OB-GYN topics. Keep it concise and relevant.
 Query: {message}
 Refined:"""
-        refined_query = message
-        if model and tokenizer:
-            try:
-                inputs = tokenizer(refine_prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
-                outputs = model.generate(**inputs, max_length=100, temperature=0.8, pad_token_id=tokenizer.eos_token_id)
-                refined_query = tokenizer.decode(outputs[0], skip_special_tokens=True).split("Refined:")[1].strip()
-                logger.info(f"sharma-health-model refined query: {refined_query}")
-            except Exception as e:
-                logger.error(f"sharma-health-model refine error: {e}")
-                refined_query = message  # Fallback to original
+    refined_query = message
+    if model and tokenizer:
+        try:
+            inputs = tokenizer(refine_prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
+            outputs = model.generate(**inputs, max_length=100, temperature=0.8, pad_token_id=tokenizer.eos_token_id)
+            refined_query = tokenizer.decode(outputs[0], skip_special_tokens=True).split("Refined:")[1].strip()
+            logger.info(f"sharma-health-model refined query: {refined_query}")
+        except Exception as e:
+            logger.error(f"sharma-health-model refine error: {e}")
+            refined_query = message  # Fallback to original
 
-        # Step 4: Call DeepSeek with refined query
-        logger.info(f"Calling DeepSeek API with refined query: {refined_query}")
-        prompt = f"""You are Sharma, a super friendly, proactive medical expert focused only on neonatal, pregnancy, and OB-GYN topics. Respond in a warm, conversational tone with flair. Be agentic—anticipate needs, suggest next steps, and keep it strictly relevant to neonatal, pregnancy, or OB-GYN. If vague, ask a fun follow-up. Do NOT misinterpret terms like 'ectopic' or invent terms like '1st-grade pregnancy'.
+    # Step 4: Call DeepSeek with refined query
+    logger.info(f"Calling DeepSeek API with refined query: {refined_query}")
+    prompt = f"""You are Sharma, a super friendly, proactive medical expert focused only on neonatal, pregnancy, and OB-GYN topics. Respond in a warm, conversational tone with flair. Be agentic—anticipate needs, suggest next steps, and keep it strictly relevant to neonatal, pregnancy, or OB-GYN. If vague, ask a fun follow-up. Do NOT misinterpret terms like 'ectopic' or invent terms like '1st-grade pregnancy'.
 Question: {refined_query}
 Answer:"""
-        payload = {
-            "model": "deepseek-chat",
-            "messages": [
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": refined_query}
-            ],
-            "max_tokens": 300,
-            "temperature": 0.9
-        }
-        headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
-        
-        try:
-            response = requests.post(DEEPSEEK_URL, json=payload, headers=headers)
-            response.raise_for_status()
-            response_data = response.json()
-            logger.info(f"DeepSeek raw response: {response_data}")
-            if "choices" in response_data and response_data["choices"]:
-                bot_response = response_data["choices"][0]["message"]["content"].strip()
-                logger.info(f"DeepSeek response: {bot_response}")
-            else:
-                bot_response = "Hmm, DeepSeek’s being shy! Let’s pivot—what’s your next neonatal or pregnancy question?\n\nWanna save this chat? Just say 'remember this'!"
-                logger.error(f"Invalid DeepSeek response: {response_data}")
-        except requests.RequestException as e:
-            logger.error(f"DeepSeek API error: {e}")
-            if model and tokenizer:
-                try:
-                    inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
-                    outputs = model.generate(**inputs, max_length=200, temperature=0.9, pad_token_id=tokenizer.eos_token_id)
-                    bot_response = tokenizer.decode(outputs[0], skip_special_tokens=True).split("Answer:")[1].strip()
-                    logger.info(f"Fallback sharma-health-model response: {bot_response}")
-                except Exception as e:
-                    logger.error(f"Fallback model error: {e}")
-                    bot_response = "Whoops, both my brains are hiccupping! Got any baby or pregnancy questions I can tackle with my notes?\n\nWanna save this chat? Just say 'remember this'!"
-            else:
-                bot_response = "DeepSeek’s offline, and I’m missing my backup brain! What’s your next move—babies or pregnancy?\n\nWanna save this chat? Just say 'remember this'!"
+    payload = {
+        "model": "deepseek-chat",
+        "messages": [
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": refined_query}
+        ],
+        "max_tokens": 300,
+        "temperature": 0.9
+    }
+    headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
+    
+    try:
+        response = requests.post(DEEPSEEK_URL, json=payload, headers=headers)
+        response.raise_for_status()
+        response_data = response.json()
+        logger.info(f"DeepSeek raw response: {response_data}")
+        if "choices" in response_data and response_data["choices"]:
+            bot_response = response_data["choices"][0]["message"]["content"].strip()
+            logger.info(f"DeepSeek response: {bot_response}")
+        else:
+            bot_response = "Hmm, DeepSeek's being shy! Let's pivot—what's your next neonatal or pregnancy question?\n\nWanna save this chat? Just say 'remember this'!"
+            logger.error(f"Invalid DeepSeek response: {response_data}")
+    except requests.RequestException as e:
+        logger.error(f"DeepSeek API error: {e}")
+        if model and tokenizer:
+            try:
+                inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
+                outputs = model.generate(**inputs, max_length=200, temperature=0.9, pad_token_id=tokenizer.eos_token_id)
+                bot_response = tokenizer.decode(outputs[0], skip_special_tokens=True).split("Answer:")[1].strip()
+                logger.info(f"Fallback sharma-health-model response: {bot_response}")
+            except Exception as e:
+                logger.error(f"Fallback model error: {e}")
+                bot_response = "Whoops, both my brains are hiccupping! Got any baby or pregnancy questions I can tackle with my notes?\n\nWanna save this chat? Just say 'remember this'!"
+        else:
+            bot_response = "I'm having trouble connecting to my knowledge source right now. Let's try a different question about neonatal care, pregnancy, or OB-GYN topics!\n\nWanna save this chat? Just say 'remember this'!"
 
     if context and context.get("topic"):
-        bot_response += f" (Oh, we’re vibing on {context['topic']}—love that!)"
+        bot_response += f" (Oh, we're vibing on {context['topic']}—love that!)"
     
     memories = memory_system.get_memory(message)
     if memories:
-        bot_response += "\n\nBy the way, I’ve got some notes:\n" + "\n".join([f"• {m['value']}" for m in memories])
+        bot_response += "\n\nBy the way, I've got some notes:\n" + "\n".join([f"• {m['value']}" for m in memories])
     else:
         bot_response += "\n\nWanna save this chat in my memory bank? Just say 'remember this'!"
-
     return bot_response
 
 if __name__ == '__main__':
